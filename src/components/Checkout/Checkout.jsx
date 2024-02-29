@@ -2,6 +2,11 @@ import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { toast } from 'react-toastify';
+
+import { useCarritoContext } from "../../context/carritoContext";
+import { Link } from "react-router-dom";
+import { createOrdenCompra ,getOrdenCompra , updateProducto , getProducto} from "../../utils/firebase";
+
 export default function Checkout() {
     const datosForm=useRef() 
     let navigate=useNavigate()
@@ -15,23 +20,39 @@ export default function Checkout() {
 
         const cliente=Object.fromEntries(data)// un objeto con todos sus datos
         console.log(cliente)
+        ////////////////// Descontar stock para cada compra
+        const aux=[...carrito]
+        aux.forEach(prodCarrito=>{
+            getProducto(prodCarrito.id).then(prodBDD=>{
+                prodBDD.stock -=prodCarrito.cant// descontar stock
+                updateProducto(prodBDD.id,prodBDD)
+            })
+        })
+        /////////////////// Orden de compra
+        createOrdenCompra(cliente,aux,totalPrice(),new Date().toISOString).then(ordenCompra=>{
+            toast(`🦄 Muchas gracias por su compra!, su orden con id: ${ordenCompra.id} por un total ${totalPrice()} fue realizada con EXITO!`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark"
+                });
 
-        e.target.reset()// resetea formulario
-
-        toast('🦄 Muchas gracias por su compra!', {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark"
-            });
-
-        //toast.success('Muchas gracias por realizar u compra!!')
-        navigate('/')
+            e.target.reset()// resetea formulario
+            //toast.success('Muchas gracias por realizar u compra!!')
+            navigate('/')
+            // vacio mi carrito
+            emptyCart()
+        })
+        //////////////////
+        
     }
+
+    const {carrito,emptyCart,totalPrice}=useCarritoContext();
+
   return (
     <div className="container contForm">
         <form  onSubmit={consultarForm} ref={datosForm}>
