@@ -19,14 +19,15 @@ export default function ItemListContainer() {
         if(idCategoria){
             //consultarBDD('../json/productos.json')
             getProductos().then((products) => {
-                const prods=products.filter(prod=>prod.idCategoria===parseInt(idCategoria))
+                const prods=products.filter(prod=> prod.stock > 0).filter(prod=>prod.idCategoria===parseInt(idCategoria))
                 const items=<ItemList prods={prods} plantilla="Item"/>;
                 //console.log('ItemListContainer',items) // MUESTRO EL JSON
                 setProductos(items)
             })
         }else{
             //consultarBDD('./json/productos.json')
-            getProductos().then((prods) => {
+            getProductos().then((products) => {
+                const prods=products.filter(prod=> prod.stock > 0)
                 const items=<ItemList prods={prods} plantilla="Item"/>;
                 console.log('ItemListContainer',items) // MUESTRO EL JSON
                 setProductos(items)

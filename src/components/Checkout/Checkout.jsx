@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 import { useCarritoContext } from "../../context/carritoContext";
 import { Link } from "react-router-dom";
-import { createOrdenCompra ,getOrdenCompra , updateProducto , getProducto} from "../../utils/firebase";
+import { createOrdenCompra  , updateProducto , getProducto} from "../../utils/firebase";
 
 export default function Checkout() {
     const datosForm=useRef() 
@@ -29,7 +29,7 @@ export default function Checkout() {
             })
         })
         /////////////////// Orden de compra
-        createOrdenCompra(cliente,aux,totalPrice(),new Date().toISOString).then(ordenCompra=>{
+        createOrdenCompra(cliente,aux,totalPrice(),new Date().toISOString()).then(ordenCompra=>{
             toast(`🦄 Muchas gracias por su compra!, su orden con id: ${ordenCompra.id} por un total ${totalPrice()} fue realizada con EXITO!`, {
                 position: "top-right",
                 autoClose: 5000,
@@ -50,41 +50,51 @@ export default function Checkout() {
         //////////////////
         
     }
-
+    // si no hay pproductos en carrito deberia funcionar el checkout
     const {carrito,emptyCart,totalPrice}=useCarritoContext();
 
   return (
-    <div className="container contForm">
-        <form  onSubmit={consultarForm} ref={datosForm}>
+    <>
+        {carrito.length===0}
+        ?
+        <h2>Para finalizar compra debe tener productos en el carrito</h2>
+        <Link className="nav-link" to={"/"}>
+            <button className="btn btn-primary">Continuar comprando</button>
+        </Link>
+        :
+        <div className="container contForm">
+            <form  onSubmit={consultarForm} ref={datosForm}>
 
-            <div className="mb-3">
-                <label htmlFor="nombre" className="form-label">Nombre y Apellido</label>
-                <input type="text" className="form-control" name="nombre" />
-            </div>
+                <div className="mb-3">
+                    <label htmlFor="nombre" className="form-label">Nombre y Apellido</label>
+                    <input type="text" className="form-control" name="nombre" />
+                </div>
 
-            <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email</label>
-                <input type="email" className="form-control" name="email" />
-            </div>
+                <div className="mb-3">
+                    <label htmlFor="email" className="form-label">Email</label>
+                    <input type="email" className="form-control" name="email" />
+                </div>
 
-            <div className="mb-3">
-                <label htmlFor="dni" className="form-label">Documento</label>
-                <input type="number" className="form-control" name="dni" />
-            </div>
+                <div className="mb-3">
+                    <label htmlFor="dni" className="form-label">Documento</label>
+                    <input type="number" className="form-control" name="dni" />
+                </div>
 
-            <div className="mb-3">
-                <label htmlFor="celular" className="form-label">Numero telefonico</label>
-                <input type="number" className="form-control" name="celular" />
-            </div>
+                <div className="mb-3">
+                    <label htmlFor="celular" className="form-label">Numero telefonico</label>
+                    <input type="number" className="form-control" name="celular" />
+                </div>
 
-            <div className="mb-3">
-                <label htmlFor="direccion" className="form-label">Direccion</label>
-                <input type="text" className="form-control" name="direccion" />
-            </div>
+                <div className="mb-3">
+                    <label htmlFor="direccion" className="form-label">Direccion</label>
+                    <input type="text" className="form-control" name="direccion" />
+                </div>
 
-            <button type="submit" className="btn btn-primary">Finalizar compra</button>
+                <button type="submit" className="btn btn-primary">Finalizar compra</button>
 
-        </form>
-    </div>
+            </form>
+        </div>
+    </>
+    
   )
 }
