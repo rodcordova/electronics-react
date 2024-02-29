@@ -9,7 +9,7 @@ import  {getFirestore, collection, addDoc,getDocs,getDoc,doc, updateDoc,deleteDo
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyD98dZR4s2Kc_x_9r96KdO5wQyL3k94eSU",
+  apiKey: ProcessingInstruction.env.APY_KEY,
   authDomain: "electrodomestics-6ea77.firebaseapp.com",
   projectId: "electrodomestics-6ea77",
   storageBucket: "electrodomestics-6ea77.appspot.com",
